@@ -1,7 +1,51 @@
 <template>
 	<div>
 		<div v-if="offerGroups.length > 0">
-			Big offerlist
+			<el-table
+			:data="offerGroups"
+			style="width: 100%"
+			column-gap="40px">
+				<el-table-column
+					width="40px"
+					className="offer-name">
+					<i class="fa fa-folder-open fa-2x"></i>
+				</el-table-column>
+				<el-table-column
+					label="Name"
+					prop="name"
+					className="offer-name"
+					min-width="100">
+				</el-table-column>
+				<el-table-column
+					label="Date"
+					prop="date"
+					className="text-secondary"
+					min-width="100">
+				</el-table-column>
+				<el-table-column
+					min-width="200"
+					align="right">
+					<template slot-scope="scope">
+						<el-switch
+							:value="checkbox(scope)"
+							@change="changeState(scope)">
+						</el-switch>
+						&nbsp;
+						<el-popover
+						placement="left"
+						trigger="click">
+							<el-link>
+								<strong>Edit</strong>
+							</el-link>
+							<br>
+							<el-link>
+								<strong>Delete</strong>
+							</el-link>
+							<span role="button" slot="reference">︙</span>
+						</el-popover>
+					</template>
+				</el-table-column>
+			</el-table>
 		</div>
 		<div v-else>
 			<div class="text-center">
@@ -29,6 +73,17 @@
 		props: {
 			offerGroups: {
 				type: Array
+			}
+		},
+		methods: {
+			checkbox(scope) {
+				if (scope.row.isActive == null) {
+					return false
+				}
+				return scope.row.isActive;
+			},
+			changeState(scope) {
+				scope.row.isActive = !scope.row.isActive
 			}
 		}
     }

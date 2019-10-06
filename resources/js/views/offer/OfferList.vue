@@ -2,9 +2,7 @@
     <div>
         <div class='content-header'>
             <div class="row">
-                <div class="col-xs-1">
-                </div>
-                <div class="col-xs-10">
+                <div class="col-xs-12">
                     <h2>Manage offers</h2>
                 </div>
             </div>
@@ -12,9 +10,7 @@
 
         <div class='content'>
             <div class="row">
-                <div class="col-xs-1">
-                </div>
-                <div class="col-xs-5">
+                <div class="col-xs-7">
                     <el-button class="create-new-btn">Create new &nbsp;&nbsp;&nbsp;&nbsp;<span>+</span></el-button>
                 </div>
                 <div class="col-xs-5">
@@ -29,60 +25,12 @@
             </div>
 			<br>
             <div class="row">
-                <div class="col-xs-1">
-                </div>
-                <div class="col-xs-10">
+                <div class="col-xs-12">
 					<div class="box round-edge-box">
 						<div class="box-body">
 							<el-tabs v-model="activeName" @tab-click="handleClick">
 								<el-tab-pane label="Offers" name="offer">
-									<el-table
-										:data="offers.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-										style="width: 100%"
-										column-gap="40px">
-										<el-table-column
-											min-width="100"
-											label="Name"
-											prop="name">
-										</el-table-column>
-										<el-table-column
-											min-width="80"
-											prop="group_name">
-										</el-table-column>
-										<el-table-column
-											prop="date"
-											label="Date"
-											sortable
-											width="100"
-											column-key="date">
-										</el-table-column>
-										<el-table-column
-											label="CVS RATE"
-											prop="cvs_rate">
-										</el-table-column>
-										<el-table-column
-											label="AOV"
-											prop="aov">
-										</el-table-column>
-										<el-table-column
-											label="Views"
-											prop="views">
-										</el-table-column>
-										<el-table-column
-											align="right">
-											<template slot-scope="scope">
-												<el-button
-													size="mini"
-													@click="handleEdit(scope.$index, scope.row)">Action</el-button>
-											</template>
-										</el-table-column>
-									</el-table>
-									<br>
-									<el-pagination
-										class="text-center"
-										layout="prev, pager, next"
-										:total="1000">
-									</el-pagination>
+                                    <OfferListTable :offers="offers"></OfferListTable>
 								</el-tab-pane>
 								<el-tab-pane label="Groups" name="group">
 									<OfferGroupList :offerGroups="offerGroups"></OfferGroupList>
@@ -98,6 +46,7 @@
 
 <script>
 import OfferGroupList from './OfferGroupList.vue'
+import OfferListTable from './OfferListTable.vue'
 
 export default {
     data() {
@@ -135,13 +84,32 @@ export default {
                 aov: '$234.04',
                 views: 142,
             }],
-            offerGroups: [],
+            offerGroups: [
+                {
+                    name: 'Group A01',
+                    date: '2016-05-02',
+                    isActive: true
+                }, {
+                    name: 'Group A02',
+                    date: '2016-05-03',
+                    isActive: false
+                }, {
+                    name: 'Group A03',
+                    date: '2016-05-04',
+                    isActive: false
+                },{
+                    name: 'Group A04',
+                    date: '2016-05-05',
+                    isActive: true
+                }
+            ],
             search: '',
             activeName: 'offer'
         }
     },
 	components: {
-		OfferGroupList
+		OfferGroupList,
+        OfferListTable
 	},
     methods: {
         handleEdit(index, row) {
@@ -154,7 +122,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 	.round-edge-box {
 		border-radius: 10px;
 	}
@@ -164,4 +132,50 @@ export default {
 		color: white;
 		border-radius: 6px;
 	}
+
+    .text-secondary {
+        color: #7F8FA4;
+    }
+
+    .offer-name {
+        color: #072856;
+        font-weight: bold;
+    }
+
+    .submenu-wrapper {
+        cursor: pointer;
+        position: relative;
+        float: right;
+        .submenu {
+            display: none;
+        }
+        &:hover {
+            .submenu {
+                position: absolute;
+                display: block;
+                top: -10px;
+                left: -60px;
+                list-style: none;
+                padding: 10px;
+                background-color: #273148;
+                border-radius: 5px;
+                z-index: 1;
+                &:before {
+                    content: "";
+                    position: absolute;
+                    top: 20%;
+                    left: 40px;
+                    margin-top: -5px;
+                    border: 10px solid transparent;
+                    border-left: 15px solid #273148;
+                }
+                .submenu-item {
+                    color: #fff;
+                    .submenu-link {
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
 </style>
