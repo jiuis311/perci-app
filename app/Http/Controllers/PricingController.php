@@ -56,15 +56,31 @@ class PricingController extends AdminController
 
         if ($braintreeId->braintree_id == '') {
             $result = $this->braintreeGateway->customer()->create();
-            
+
             if ($result->success) {
                 $this->userRepository->updateColumn($userId, 'braintree_id', $result->customer->id);
                 return $this->response(true, '', $result->customer->id);
             } else {
                 return $this->response(false, 'Braintree: Create customer failed', '');
-            }            
+            }
         } else {
             return $this->response(true, '', $braintreeId->braintree_id);
+        }
+    }
+
+    public function getPaymentMethodToken(Request $request) {
+        $userId = Auth::id();
+        $user = $this->userRepository->findById($userId, ['braintree_id']);
+        if ($user->braintree_id) {
+            $customer = $this->braintreeGateway->customer()->find($user->braintree_id);
+            $paymentMethods = $customer->paymentMethods;
+            if (count($paymentMethods)) {
+                return $this->response(true, '', $paymentMethods[0]->token);
+            } else {
+                return $this->response(false, 'Braintree: No payment method found', '');
+            }
+        } else {
+            return $this->response(false, 'Braintree: No braintree id', '');
         }
     }
 

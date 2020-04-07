@@ -42,6 +42,10 @@ $router->group(['middleware' => ['web', 'auth']], function (Router $router) {
             'as'    => 'api.pricing.getUserBraintreeId',
             'uses'  => 'PricingController@getUserBraintreeId'
         ]);
+        $router->get('/getPaymentMethodToken', [
+            'as'    => 'api.pricing.getPaymentMethodToken',
+            'uses'  => 'PricingController@getPaymentMethodToken'
+        ]);
         $router->get('/createPaymentMethod/{customerId}/{nonce}', [
             'as'    => 'api.pricing.createPaymentMethod',
             'uses'  => 'PricingController@createPaymentMethod'
@@ -66,11 +70,11 @@ $router->group(['middleware' => ['web', 'auth']], function (Router $router) {
         ]);
         $router->delete('/{groupId}', [
             'as' => 'api.groups.delete',
-            'uses' => 'GroupController@destroy'          
+            'uses' => 'GroupController@destroy'
         ]);
         $router->get('/{groupId}/offers', [
             'as' => 'api.groups.get.offers',
-            'uses' => 'GroupController@offers'        
+            'uses' => 'GroupController@offers'
         ]);
     });
 

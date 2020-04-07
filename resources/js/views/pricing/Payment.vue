@@ -69,24 +69,24 @@
             <p>CARD NUMBER</p>
             <div class="inner-addon right-addon card-form">
               <i class="glyphicon el-icon-bank-card"></i>
-              <input type="text" class="form-control" v-model="cardNumber" placeholder="0000 0000 0000 0000"/>
+              <div id="creditCardNumber" type="text" class="form-control" v-model="cardNumber"></div>
             </div>
-            
+
             <el-row :gutter="20" class="card-form">
               <el-col :span="8">
                 <span>NAME ON CARD</span>
-                <el-input v-model="name" placeholder="Ex. John"></el-input>   
+                <el-input v-model="name" placeholder="Ex. John"></el-input>
               </el-col>
-              <el-col :span="4">
+              <el-col :span="6">
                 <span>DATE</span>
-                <el-input v-model="date" placeholder="MM/YY"></el-input>   
+                <div id="expireDate" type="text" class="form-control" v-model="date" placeholder="MM/YY"></div>
               </el-col>
               <el-col :span="4">
                 <span>CVV CODE</span>
-                <el-input v-model="cvv" ></el-input>   
+                <div id="cvv" type="text" class="form-control" v-model="cvv" ></div>
               </el-col>
             </el-row>
-       
+
           </div>
           <el-radio v-model="method" label="paypal">
             Checkout with
@@ -95,7 +95,8 @@
           <div v-if="method == 'paypal'">
             <p class="detail">Click the button to sign in your paypal account and pay securely</p>
             <div id="paypalButton"></div>
-          </div>   
+          </div>
+          <div id="paypal-button"></div>
           <el-row>
             <el-col :span="4" :offset="12">
               <el-button size="medium" data-dismiss="modal">Cancel</el-button>
@@ -106,7 +107,7 @@
                 <i class="el-icon-arrow-right el-icon-right"></i>
               </el-button>
             </el-col>
-          </el-row>        
+          </el-row>
         </div>
       </div>
     </div>
@@ -118,6 +119,7 @@
 <script>
 import braintree from 'braintree-web';
 import paypal from 'paypal-checkout';
+
 export default {
   components:{
     Success: () => import("@/views/pricing/SuccessModal"),
@@ -178,8 +180,8 @@ export default {
 .card-form{
   margin-bottom: 20px;
 }
-.inner-addon { 
-  position: relative; 
+.inner-addon {
+  position: relative;
 }
 
 /* style icon */
@@ -197,9 +199,11 @@ export default {
 .next-voice{
   text-align: right;
 }
+
 .secure-text{
   right: 0px;
   position: absolute;
   top: 11px;
 }
 </style>
+

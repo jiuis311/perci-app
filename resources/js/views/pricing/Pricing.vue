@@ -59,7 +59,7 @@
         color: white;
     }
     .priceContainer {
-        position: absolute;                  
+        position: absolute;
         bottom: 330px;
         width: 100%;
         height: 100px;
@@ -67,7 +67,7 @@
         text-align: center;
     }
     .svg-container{
-        position: absolute;                  
+        position: absolute;
         bottom: 350px;
         width: 100%;
         height: 100px;
@@ -91,7 +91,7 @@
     }
     .planDetailContainer {
         padding: 0px 30px;
-        position: absolute;                  
+        position: absolute;
         bottom: 73px;
         width: 100%;
         height: 265px;
@@ -123,7 +123,7 @@
         color: #000;
     }
     .action-button{
-        position: absolute;                  
+        position: absolute;
         bottom: 20px;
         height: 33px;
         text-align: center;
@@ -133,12 +133,12 @@
         font-family: 'Poppins', sans-serif;
         font-size: 12.5px;
         font-weight: 600;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.07), 
-                    0 2px 4px rgba(0,0,0,0.07), 
-                    0 4px 8px rgba(0,0,0,0.07), 
+        box-shadow: 0 1px 2px rgba(0,0,0,0.07),
+                    0 2px 4px rgba(0,0,0,0.07),
+                    0 4px 8px rgba(0,0,0,0.07),
                     0 8px 16px rgba(0,0,0,0.07),
-                    0 16px 32px rgba(0,0,0,0.07), 
-                    0 32px 64px rgba(0,0,0,0.07);        
+                    0 16px 32px rgba(0,0,0,0.07),
+                    0 32px 64px rgba(0,0,0,0.07);
     }
     .startButton {
         color: white;
@@ -186,7 +186,7 @@
         margin-left: auto;
         margin-right: auto;
         margin-top: 15px;
-    }  
+    }
     }
 
     @media only screen and (min-width: 600px) {
@@ -197,49 +197,49 @@
     .plansContainer{
         display: inline-flex;
     }
-        /* Styling modal */ 
-        .modal:before { 
-            content: ''; 
-            display: inline-block; 
-            height: 100%; 
-            vertical-align: middle; 
-        } 
-          
-        .modal-dialog { 
-            display: inline-block; 
-            vertical-align: middle; 
+        /* Styling modal */
+        .modal:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+        }
+
+        .modal-dialog {
+            display: inline-block;
+            vertical-align: middle;
             left: 35%;
-        } 
-          
-        .modal .modal-content { 
+        }
+
+        .modal .modal-content {
             border-radius: 10px;
-            padding: 20px 20px 20px 20px; 
-            -webkit-animation-name: modal-animation; 
-            -webkit-animation-duration: 0.5s; 
-            animation-name: modal-animation; 
-            animation-duration: 0.5s; 
-        } 
-        @-webkit-keyframes modal-animation { 
-            from { 
-                top: -100px; 
-                opacity: 0; 
-            } 
-            to { 
-                top: 0px; 
-                opacity: 1; 
-            } 
-        } 
-          
-        @keyframes modal-animation { 
-            from { 
-                top: -100px; 
-                opacity: 0; 
-            } 
-            to { 
-                top: 0px; 
-                opacity: 1; 
-            } 
-        } 
+            padding: 20px 20px 20px 20px;
+            -webkit-animation-name: modal-animation;
+            -webkit-animation-duration: 0.5s;
+            animation-name: modal-animation;
+            animation-duration: 0.5s;
+        }
+        @-webkit-keyframes modal-animation {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 0px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes modal-animation {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 0px;
+                opacity: 1;
+            }
+        }
 }
 </style>
 
@@ -275,38 +275,39 @@
                     <p class="impressionAText" v-bind:style="{ 'color': plan.color}"> {{ plan.impression }} impressions</p>
                     <p class="impressionBText">per month</p>
                     <div v-for="detail in plan.details" :key="detail">
-                        <p class="detailText"> 
+                        <p class="detailText">
                             <i class="el-icon-success"></i>
                             {{ detail }}
                         </p>
                     </div>
                 </div>
-                <button class="action-button startButton" 
+                <button class="action-button startButton"
                         v-if="current_plan === ''"
-                        v-bind:style="{ 'background-color': plan.color}" 
+                        v-bind:style="{ 'background-color': plan.color}"
                         v-on:click="choosePlan(plan)">
                         Start now
                 </button>
                 <button class="action-button startButton"
                         v-else-if="current_plan === plan.slug"
-                        v-bind:style="{ 'background-color': '#85929E'}" 
+                        v-bind:style="{ 'background-color': '#85929E'}"
                         v-on:click="choosePlan(plan)"
                         v-bind:disabled="true"
                         >
                         Current Plan
                 </button>
                 <button class="action-button startButton"
-                        data-toggle="modal" data-target="#upgradeModal" 
-                        v-bind:style="{ 'background-color': plan.color}" 
-                        v-else-if="current_plan == 'free'">
+                        data-toggle="modal" data-target="#upgradeModal"
+                        v-bind:style="{ 'background-color': plan.color}"
+                        v-else-if="current_plan == 'free'"
+                        @click="choosePlan(plan, true)">
                         Upgrade Now
-                </button> 
-                <button class="action-button" 
+                </button>
+                <button class="action-button"
                         data-toggle="modal" data-target="#downgrade"
-                        v-bind:style="{ 'color':'#85929E'}" 
+                        v-bind:style="{ 'color':'#85929E'}"
                          v-else>
                         Down Grade
-                </button>               
+                </button>
             </div>
             <div class="planBox">
                 <div class="planHeader" v-bind:style="{ 'background-color': '#7D14CF'}">
@@ -335,15 +336,18 @@
                 <button class="action-button contactButon" data-toggle="modal" data-target="#customModal">Contact Us</button>
             </div>
         </div>
-        <CustomForm/>
         <Payment @update="update"/>
         <DownGrade @update="update"/>
         <Upgrade/>
         <NoImpression/>
+        <CustomForm/>
     </div>
 </template>
 
 <script>
+
+    import braintree from 'braintree-web';
+
     export default {
         components: {
             CustomForm: () => import("@/views/pricing/CustomForm"),
@@ -354,46 +358,171 @@
         },
         data() {
             return {
-                plans: [
-                    {
-                        slug: 'free',
-                        details: '',
-                        colors: ''
-                    },
-                    {
-                        slug: 'starter',
-                        details:'',
-                        colors: ''
-                    }
-                ],
+                plans: [],
                 current_plan: '',
+                paymentFieldInstance: '',
+                selectedPlanId: '',
+                userBraintreeId: '',
+                paymentMethodToken: '',
                 impression: 0,
             }
         },
         methods: {
             getData() {
+                axios.get(route('api.pricing.getAllPlans', {}))
+                    .then(res => {
+                        this.plans = res.data.data;
+                        this.plans.sort((a, b) => (a.cost > b.cost) ? 1 : -1)
 
-                for (let index = 0; index < this.plans.length; index++) {
-                    switch(this.plans[index].slug) {
-                        case 'free':
-                            this.plans[index].details = ['Unlimited offers', 'Upsell & Cross-sell', 'Sales Booster add-ons', 'Key metrics reports', 'Smart Popup Control', 'Responsive optimized templates'];
-                            this.plans[index].color = '#67C23A';
-                            this.plans[index].cost = '0.00'
-                            this.plans[index].impression = 500
-                            break;
-                        case 'starter':
-                            this.plans[index].details = ['Unlimited offers', 'Upsell & Cross-sell', 'Sales Booster add-ons', 'Key metrics reports', 'Smart Popup Control', 'Responsive optimized templates'];
-                            this.plans[index].color = '#0060E5';
-                            this.plans[index].cost = '15.5'
-                            this.plans[index].impression = 2000
-                    }
-                }
+                        for (let index = 0; index < this.plans.length; index++) {
+                            switch(this.plans[index].slug) {
+                                case 'free':
+                                    this.plans[index].details = ['Unlimited offers', 'Upsell & Cross-sell', 'Sales Booster add-ons', 'Key metrics reports', 'Smart Popup Control', 'Responsive optimized templates'];
+                                    this.plans[index].color = '#67C23A';
+                                    this.plans[index].cost = '0.00'
+                                    this.plans[index].impression = 500
+                                    break;
+                                case 'starter':
+                                    this.plans[index].details = ['Unlimited offers', 'Upsell & Cross-sell', 'Sales Booster add-ons', 'Key metrics reports', 'Smart Popup Control', 'Responsive optimized templates'];
+                                    this.plans[index].color = '#0060E5';
+                                    this.plans[index].cost = '15.5'
+                                    this.plans[index].impression = 2000
+                            }
+                        }
+                    })
             },
             choosePlan: function (plan) {
-                this.current_plan = plan.slug
+                // this.current_plan = plan.slug
+                // console.log("Choose plan")
+                let id = plan.braintree_plan
+                this.selectedPlanId = id
+                if (this.paymentMethodToken == '') {
+                    $('#upgradeModal').modal('show');
+                }
+                console.log(this.selectedPlanId)
             },
-            update(value){
-                this.current_plan = value
+            createBraintreeCreditCard: function() {
+                axios.get(route('api.pricing.getUserBraintreeId', {}))
+                    .then(res=>{
+                        this.userBraintreeId = res.data.data;
+                        axios.get(route('api.pricing.getClientToken', {}))
+                            .then(res=>{
+                                let clientToken = res.data;
+                                console.log(res.data)
+                                braintree.client.create({
+                                    authorization: clientToken,
+                                })
+                                .then(clientInstance => {
+                                    let options = {
+                                        client: clientInstance,
+                                        fields: {
+                                            number: {
+                                                selector: '#creditCardNumber',
+                                                placeholder: '1111 1111 1111 1111'
+                                            },
+                                            cvv: {
+                                                selector: '#cvv',
+                                                placeholder: '000'
+                                            },
+                                            expirationDate: {
+                                                selector: '#expireDate',
+                                                placeholder: 'MM/YYYY'
+                                            }
+                                        }
+                                    }
+                                    return braintree.hostedFields.create(options)
+                                })
+                                .then(paymentFieldInstance => {
+                                    this.paymentFieldInstance = paymentFieldInstance;
+                                })
+                                .catch(err => {
+                                });
+                            })
+                        })
+            },
+            createBraintreePaypal: function() {
+                axios.get(route('api.pricing.getUserBraintreeId', {}))
+                    .then(res=>{
+                        this.userBraintreeId = res.data.data;
+                        axios.get(route('api.pricing.getClientToken', {}))
+                            .then(res=>{
+                                let clientToken = res.data;
+                                // Create a client.
+                                braintree.client.create({
+                                    authorization: clientToken
+                                }).then(function (clientInstance) {
+                                    console.log(clientInstance)
+                                    // Create a PayPal Checkout component.
+                                    return braintree.paypalCheckout.create({
+                                        client: clientInstance
+                                    });
+                                }).then(function (paypalCheckoutInstance) {
+                                    console.log(paypalCheckoutInstance)
+                                    // Set up PayPal with the checkout.js library
+                                    return paypal.Button.render({
+                                        env: 'sandbox', // or 'sandbox' or 'production'
+
+                                        payment: function () {
+                                            return paypalCheckoutInstance.createPayment({
+                                                // Your PayPal options here. For available options, see
+                                                // http://braintree.github.io/braintree-web/current/PayPalCheckout.html#createPayment
+                                            });
+                                        },
+
+                                        onAuthorize: function (data, actions) {
+                                            return paypalCheckoutInstance.tokenizePayment(data)
+                                                .then(function (payload) {
+                                                // Submit `payload.nonce` to your server.
+                                                });
+                                        },
+
+                                        onCancel: function (data) {
+                                            console.log('checkout.js payment cancelled', JSON.stringify(data, 0, 2));
+                                        },
+
+                                        onError: function (err) {
+                                            console.error('checkout.js error', err);
+                                        }
+                                    }, '#paypal-button');
+                                }).then(function () {
+                                    // The PayPal button will be rendered in an html element with the id
+                                    // `paypal-button`. This function will be called when the PayPal button
+                                    // is set up and ready to be used.
+                                }).catch(function (err) {
+                                    console.log(err)
+                                    // Handle component creation error
+                                });
+                            })
+                        })
+            },
+            update(){
+                this.payWithCreditCard();
+            },
+            payWithCreditCard() {
+                if (this.paymentMethodToken != '') {
+                    axios.get(route('api.pricing.subscribeToPlan', {token: token, planId: this.selectedPlanId}))
+                        .then(res=>{
+                            console.log(res);
+                        })
+                } else {
+                    if (this.userBraintreeId && this.paymentFieldInstance && this.selectedPlanId) {
+                        this.paymentFieldInstance.tokenize().then(payload => {
+                            let nonce = payload.nonce;
+                            axios.get(route('api.pricing.createPaymentMethod', {customerId: this.userBraintreeId, nonce: nonce}))
+                                .then(res=>{
+                                    token = res.data.data.paymentMethod.token;
+                                    this.paymentMethodToken = token;
+                                    axios.get(route('api.pricing.subscribeToPlan', {token: token, planId: this.selectedPlanId}))
+                                        .then(res=>{
+                                            console.log(res);
+                                        })
+                                })
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                    }
+                }
             }
         },
         watch:{
@@ -404,13 +533,31 @@
             },
             impression: function(value){
                 if(value == 0){
-                  let x = document.getElementById("noImpression")  
+                  let x = document.getElementById("noImpression")
                   x.modal('show')
                 }
             }
         },
         mounted() {
-            this.getData();
+            this.getData()
+            // let checkoutLib = document.createElement('script')
+            // checkoutLib.setAttribute('src', 'https://www.paypalobjects.com/api/checkout.js')
+            // let clientComponent = document.createElement('script')
+            // clientComponent.setAttribute('src', 'https://js.braintreegateway.com/web/3.60.0/js/client.min.js')
+            // let paypalCheckoutComponent = document.createElement('script')
+            // paypalCheckoutComponent.setAttribute('src', 'https://js.braintreegateway.com/web/3.60.0/js/paypal-checkout.min.js')
+            // document.head.appendChild(checkoutLib, clientComponent, paypalCheckoutComponent)
+
+            axios.get(route('api.pricing.getPaymentMethodToken', {}))
+                .then(res=>{
+                    this.paymentMethodToken = res.data.data;
+                    if (this.paymentMethodToken == '') {
+                        this.createBraintreeCreditCard()
+                    }
+                    console.log(this.paymentMethodToken)
+                })
+
+            // this.createBraintreePaypal()
         }
     }
 </script>
