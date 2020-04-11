@@ -117,8 +117,6 @@
 </template>
 
 <script>
-import braintree from 'braintree-web';
-import paypal from 'paypal-checkout';
 
 export default {
   components:{

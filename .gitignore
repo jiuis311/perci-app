@@ -18,3 +18,4 @@ yarn-error.log
 /public/js/manifest.js
 /public/js/chunk/*
 package-lock.json
+yarn.lock

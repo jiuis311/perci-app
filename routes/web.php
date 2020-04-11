@@ -62,4 +62,35 @@ $router->group(['prefix' => 'ult-upsell', 'middleware' => ['web', 'auth']], func
     $router->get('delete-script', 'AuthCallbackController@deleteScripts');
     $router->get('delete-widget', 'AuthCallbackController@deleteWidgets');
 
+    $router->group(['prefix' => 'pricing'], function (Router $router) {
+        $router->get('/getPlans', [
+            'as'    => 'pricing.getAllPlans',
+            'uses'  => 'PricingController@getAllPlans'
+        ]);
+        $router->get('/getClientToken', [
+            'as'    => 'pricing.getClientToken',
+            'uses'  => 'PricingController@clientToken'
+        ]);
+        $router->get('/getUserBraintreeId', [
+            'as'    => 'pricing.getUserBraintreeId',
+            'uses'  => 'PricingController@getUserBraintreeId'
+        ]);
+        $router->get('/getPaymentMethodToken', [
+            'as'    => 'pricing.getPaymentMethodToken',
+            'uses'  => 'PricingController@getPaymentMethodToken'
+        ]);
+        $router->get('/createPaymentMethod/{customerId}/{nonce}', [
+            'as'    => 'pricing.createPaymentMethod',
+            'uses'  => 'PricingController@createPaymentMethod'
+        ]);
+        $router->get('/subscribeToPlan/{token}/{planId}', [
+            'as'    => 'pricing.subscribeToPlan',
+            'uses'  => 'PricingController@subscribeToPlan'
+        ]);
+        $router->get('/get-subscription', [
+            'as'    => 'pricing.getUserSubscription',
+            'uses'  => 'PricingController@getUserSubscription'
+        ]);
+        $router->get('test', 'PricingController@testRoute');
+    });
 });

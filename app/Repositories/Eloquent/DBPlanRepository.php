@@ -11,4 +11,9 @@ class DBPlanRepository extends DBRepository implements PlanRepository
     {
         parent::__construct($model);
     }
+
+    public function getPlanByBraintreePlanId($plan_id) {
+        $plan = Plan::where('braintree_plan', $plan_id)->first();
+        return $plan;
+    }
 }

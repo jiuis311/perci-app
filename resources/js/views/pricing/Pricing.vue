@@ -346,7 +346,8 @@
 
 <script>
 
-    import braintree from 'braintree-web';
+    import braintree from 'braintree-web'
+    import paypal from 'paypal-checkout'
 
     export default {
         components: {
@@ -369,7 +370,7 @@
         },
         methods: {
             getData() {
-                axios.get(route('api.pricing.getAllPlans', {}))
+                axios.get(route('pricing.getAllPlans', {}))
                     .then(res => {
                         this.plans = res.data.data;
                         this.plans.sort((a, b) => (a.cost > b.cost) ? 1 : -1)
@@ -389,26 +390,55 @@
                                     this.plans[index].impression = 2000
                             }
                         }
+
+                        axios.get(route('pricing.getUserSubscription', {}))
+                            .then(res => {
+                                // console.log(res.data.data);
+                                let resData = res.data.data;
+                                console.log(resData);
+                                if (!resData) {
+                                    this.current_plan = this.plans[0].slug
+                                } else {
+                                    this.current_plan = this.plans[resData['plan_id']-1].slug
+                                }
+                            })
                     })
             },
             choosePlan: function (plan) {
-                // this.current_plan = plan.slug
+                this.current_plan = plan.slug
                 // console.log("Choose plan")
                 let id = plan.braintree_plan
                 this.selectedPlanId = id
-                if (this.paymentMethodToken == '') {
+                if (!this.paymentMethodToken) {
+                    console.log("Open modal")
                     $('#upgradeModal').modal('show');
+                } else {
+                    this.payWithCreditCard();
                 }
                 console.log(this.selectedPlanId)
             },
-            createBraintreeCreditCard: function() {
-                axios.get(route('api.pricing.getUserBraintreeId', {}))
+            getUserBraintreeId: function() {
+                axios.get(route('pricing.getUserBraintreeId', {}))
                     .then(res=>{
                         this.userBraintreeId = res.data.data;
-                        axios.get(route('api.pricing.getClientToken', {}))
+                    })
+            },
+            checkPaymentMethod: function() {
+                axios.get(route('pricing.getPaymentMethodToken', {}))
+                    .then(res=>{
+                        this.paymentMethodToken = res.data.data;
+                        if (!this.paymentMethodToken) {
+                            this.createBraintreeCreditCard()
+                        }
+                    })
+            },
+            createBraintreeCreditCard: function() {
+                axios.get(route('pricing.getUserBraintreeId', {}))
+                    .then(res=>{
+                        this.userBraintreeId = res.data.data;
+                        axios.get(route('pricing.getClientToken', {}))
                             .then(res=>{
                                 let clientToken = res.data;
-                                console.log(res.data)
                                 braintree.client.create({
                                     authorization: clientToken,
                                 })
@@ -441,10 +471,10 @@
                         })
             },
             createBraintreePaypal: function() {
-                axios.get(route('api.pricing.getUserBraintreeId', {}))
+                axios.get(route('pricing.getUserBraintreeId', {}))
                     .then(res=>{
                         this.userBraintreeId = res.data.data;
-                        axios.get(route('api.pricing.getClientToken', {}))
+                        axios.get(route('pricing.getClientToken', {}))
                             .then(res=>{
                                 let clientToken = res.data;
                                 // Create a client.
@@ -499,8 +529,8 @@
                 this.payWithCreditCard();
             },
             payWithCreditCard() {
-                if (this.paymentMethodToken != '') {
-                    axios.get(route('api.pricing.subscribeToPlan', {token: token, planId: this.selectedPlanId}))
+                if (this.paymentMethodToken) {
+                    axios.get(route('pricing.subscribeToPlan', {token: this.paymentMethodToken, planId: this.selectedPlanId}))
                         .then(res=>{
                             console.log(res);
                         })
@@ -508,11 +538,11 @@
                     if (this.userBraintreeId && this.paymentFieldInstance && this.selectedPlanId) {
                         this.paymentFieldInstance.tokenize().then(payload => {
                             let nonce = payload.nonce;
-                            axios.get(route('api.pricing.createPaymentMethod', {customerId: this.userBraintreeId, nonce: nonce}))
+                            axios.get(route('pricing.createPaymentMethod', {customerId: this.userBraintreeId, nonce: nonce}))
                                 .then(res=>{
-                                    token = res.data.data.paymentMethod.token;
-                                    this.paymentMethodToken = token;
-                                    axios.get(route('api.pricing.subscribeToPlan', {token: token, planId: this.selectedPlanId}))
+                                    console.log(res.data.data.paymentMethod.token);
+                                    this.paymentMethodToken = res.data.data.paymentMethod.token;
+                                    axios.get(route('pricing.subscribeToPlan', {token: this.paymentMethodToken, planId: this.selectedPlanId}))
                                         .then(res=>{
                                             console.log(res);
                                         })
@@ -540,6 +570,8 @@
         },
         mounted() {
             this.getData()
+            this.getUserBraintreeId();
+            this.checkPaymentMethod()
             // let checkoutLib = document.createElement('script')
             // checkoutLib.setAttribute('src', 'https://www.paypalobjects.com/api/checkout.js')
             // let clientComponent = document.createElement('script')
@@ -548,14 +580,6 @@
             // paypalCheckoutComponent.setAttribute('src', 'https://js.braintreegateway.com/web/3.60.0/js/paypal-checkout.min.js')
             // document.head.appendChild(checkoutLib, clientComponent, paypalCheckoutComponent)
 
-            axios.get(route('api.pricing.getPaymentMethodToken', {}))
-                .then(res=>{
-                    this.paymentMethodToken = res.data.data;
-                    if (this.paymentMethodToken == '') {
-                        this.createBraintreeCreditCard()
-                    }
-                    console.log(this.paymentMethodToken)
-                })
 
             // this.createBraintreePaypal()
         }

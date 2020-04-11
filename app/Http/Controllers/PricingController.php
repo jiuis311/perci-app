@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Plan;
 use App\Repositories\PlanRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\SubscriptionRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -20,13 +21,15 @@ class PricingController extends AdminController
     private $planRepository;
     private $userRepository;
     private $braintreeGateway;
+    private $subscriptionRepository;
 
-    public function __construct(Plan $plan, PlanRepository $planRepository, UserRepository $userRepository)
+    public function __construct(Plan $plan, PlanRepository $planRepository, UserRepository $userRepository, SubscriptionRepository $subscriptionRepository)
     {
         $this->initBraintreeGateway();
         $this->plan = $plan;
         $this->planRepository = $planRepository;
         $this->userRepository = $userRepository;
+        $this->subscriptionRepository = $subscriptionRepository;
     }
 
     private function initBraintreeGateway() {
@@ -68,29 +71,35 @@ class PricingController extends AdminController
         }
     }
 
+    public function getUserSubscription() {
+        $user_id = Auth::id();
+        $user = $this->userRepository->findById($user_id);
+        $subscription = $this->subscriptionRepository->getUserSubscription($user_id);
+        return $this->response(true, '', $subscription);
+    }
+
     public function getPaymentMethodToken(Request $request) {
-        $userId = Auth::id();
-        $user = $this->userRepository->findById($userId, ['braintree_id']);
-        if ($user->braintree_id) {
-            $customer = $this->braintreeGateway->customer()->find($user->braintree_id);
-            $paymentMethods = $customer->paymentMethods;
-            if (count($paymentMethods)) {
-                return $this->response(true, '', $paymentMethods[0]->token);
-            } else {
-                return $this->response(false, 'Braintree: No payment method found', '');
-            }
+        $user_id = Auth::id();
+        $user = $this->userRepository->findById($user_id);
+        if ($user->payment_method_token) {
+            return $this->response(true, 'Success', $user->payment_method_token);
         } else {
-            return $this->response(false, 'Braintree: No braintree id', '');
+            return $this->response(false, 'No payment method', '');
         }
     }
 
     public function createPaymentMethod(Request $request, $customerId, $nonce) {
+        $user_id = Auth::id();
+        $user = $this->userRepository->findById($user_id);
+
         $result = $this->braintreeGateway->paymentMethod()->create([
-            'customerId' => $customerId,
+            'customerId' => $user->braintree_id,
             'paymentMethodNonce' => $nonce,
         ]);
-
+        // dd($result);
         if ($result->success) {
+            $user->payment_method_token = $result->paymentMethod->token;
+            $user->save();
             return $this->response(true, '', $result);
         } else {
             return $this->response(false, 'Braintree: Create payment method failed', '');
@@ -98,15 +107,39 @@ class PricingController extends AdminController
     }
 
     public function subscribeToPlan(Request $request, $token, $planId) {
+        $user_id = Auth::id();
+        $user = $this->userRepository->findById($user_id);
+        $subscription = $this->subscriptionRepository->getUserSubscription($user_id);
+        $new_plan = $this->planRepository->getPlanByBraintreePlanId($planId);
+
+        if ($user->payment_method_token == null) {
+            return $this->response(false, 'No payment method', '');
+        }
+
+        try {
+            if ($subscription) {
+                $cancel_subscription = $this->braintreeGateway->subscription()->cancel($subscription->braintree_subscription_id);
+            }
+        } catch (Braintree\Exception\NotFound $e) {
+            return $this->response(false, $e->getMessage(), '');
+        }
+
         $result = $this->braintreeGateway->subscription()->create([
-            'paymentMethodToken' => $token,
+            'paymentMethodToken' => $user->payment_method_token,
             'planId' => $planId,
         ]);
-
         if ($result->success) {
+            $new_subscription = $this->subscriptionRepository->updateUserSubscription($user_id, $new_plan->id, $result->subscription->id);
             return $this->response(true, '', $result);
         } else {
             return $this->response(false, 'Braintree: Subscription failed', '');
         }
+    }
+
+    public function testRoute() {
+        $user_id = Auth::id();
+        $user = $this->userRepository->findById($user_id);
+        $subscription = $this->subscriptionRepository->getUserSubscription($user_id);
+        dd($subscription);
     }
 }

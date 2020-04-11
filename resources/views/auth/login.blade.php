@@ -27,6 +27,9 @@
         @if(session()->has('error_msg'))
             <p class="login-box-msg text-danger">{{ session('error_msg') }}</p>
         @endif
+        @php
+
+        @endphp
 
         <form action="" method="post">
             {!! csrf_field() !!}
