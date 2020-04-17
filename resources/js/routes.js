@@ -4,6 +4,7 @@ import reportRoutes from './views/report';
 import pricingRoutes from './views/pricing';
 import helpRoutes from './views/help';
 import dashboardRoutes from "./views/dashboard";
+import tutorialRoutes from "./views/tutorial";
 
 export default [
     ...userRoutes,
@@ -11,5 +12,6 @@ export default [
     ...reportRoutes,
     ...pricingRoutes,
     ...helpRoutes,
-    ...dashboardRoutes
+    ...dashboardRoutes,
+    ...tutorialRoutes
 ]
