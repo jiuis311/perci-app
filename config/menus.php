@@ -95,7 +95,7 @@ return [
         'name' => 'Tutorials',
         'text' => 'Tutorials',
         'icon' => 'fa fa-camera',
-        'router' => '/admin/account/profile',
+        'router' => '/ult-upsell/tutorials',
         'order' => 5,
         'tag' => "",
         'authorize' => [],
