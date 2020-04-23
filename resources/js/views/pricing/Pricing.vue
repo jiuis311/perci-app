@@ -282,30 +282,28 @@
                     </div>
                 </div>
                 <button class="action-button startButton"
-                        v-if="current_plan === ''"
+                        v-if="updatedPlan === ''"
                         v-bind:style="{ 'background-color': plan.color}"
                         v-on:click="choosePlan(plan)">
                         Start now
                 </button>
                 <button class="action-button startButton"
-                        v-else-if="current_plan === plan.slug"
+                        v-else-if="updatedPlan === plan.slug"
                         v-bind:style="{ 'background-color': '#85929E'}"
-                        v-on:click="choosePlan(plan)"
                         v-bind:disabled="true"
                         >
                         Current Plan
                 </button>
                 <button class="action-button startButton"
-                        data-toggle="modal" data-target="#upgradeModal"
                         v-bind:style="{ 'background-color': plan.color}"
-                        v-else-if="current_plan == 'free'"
-                        @click="choosePlan(plan, true)">
+                        v-else-if="updatedPlan == 'free'"
+                        @click="choosePlan(plan, 'upgrade')">
                         Upgrade Now
                 </button>
                 <button class="action-button"
-                        data-toggle="modal" data-target="#downgrade"
                         v-bind:style="{ 'color':'#85929E'}"
-                         v-else>
+                        @click="choosePlan(plan, 'downgrade')"
+                        v-else>
                         Down Grade
                 </button>
             </div>
@@ -338,9 +336,15 @@
         </div>
         <Payment @update="update"/>
         <DownGrade @update="update"/>
-        <Upgrade/>
+        <Upgrade @update="update"/>
         <NoImpression/>
         <CustomForm/>
+        <Success/>
+        <div class="vld-parent">
+            <loading :active.sync="isLoading"
+                :can-cancel="true"
+                ></loading>
+        </div>
     </div>
 </template>
 
@@ -348,6 +352,9 @@
 
     import braintree from 'braintree-web'
     import paypal from 'paypal-checkout'
+    import Loading from 'vue-loading-overlay';
+    // Import stylesheet
+    import 'vue-loading-overlay/dist/vue-loading.css';
 
     export default {
         components: {
@@ -355,7 +362,9 @@
             Payment: () => import("@/views/pricing/Payment"),
             DownGrade: ()=> import("@/views/pricing/DownGradeModal"),
             Upgrade: ()=> import("@/views/pricing/UpgradeModal"),
-            NoImpression: ()=> import("@/views/pricing/NoImpression")
+            NoImpression: ()=> import("@/views/pricing/NoImpression"),
+            Success: () => import("@/views/pricing/SuccessModal"),
+            Loading,
         },
         data() {
             return {
@@ -365,7 +374,9 @@
                 selectedPlanId: '',
                 userBraintreeId: '',
                 paymentMethodToken: '',
+                updatedPlan: '',
                 impression: 0,
+                isLoading: false,
             }
         },
         methods: {
@@ -401,19 +412,19 @@
                                 } else {
                                     this.current_plan = this.plans[resData['plan_id']-1].slug
                                 }
+                                this.updatedPlan = this.current_plan
                             })
                     })
             },
-            choosePlan: function (plan) {
+            choosePlan: function (plan, action) {
                 this.current_plan = plan.slug
-                // console.log("Choose plan")
+                console.log("Choose plan");
                 let id = plan.braintree_plan
                 this.selectedPlanId = id
-                if (!this.paymentMethodToken) {
-                    console.log("Open modal")
+                if (action == 'upgrade') {
                     $('#upgradeModal').modal('show');
-                } else {
-                    this.payWithCreditCard();
+                } else if (action == 'downgrade') {
+                    $('#downgrade').modal('show');
                 }
                 console.log(this.selectedPlanId)
             },
@@ -526,13 +537,22 @@
                         })
             },
             update(){
-                this.payWithCreditCard();
+                if (!this.paymentMethodToken) {
+                    console.log("Open modal")
+                    $('#payModal').modal('show');
+                } else {
+                    this.payWithCreditCard();
+                }
             },
             payWithCreditCard() {
+                this.isLoading = true;
                 if (this.paymentMethodToken) {
                     axios.get(route('pricing.subscribeToPlan', {token: this.paymentMethodToken, planId: this.selectedPlanId}))
                         .then(res=>{
                             console.log(res);
+                            this.isLoading = false;
+                            this.updatedPlan = this.current_plan;
+                            $('#successModal').modal('show');
                         })
                 } else {
                     if (this.userBraintreeId && this.paymentFieldInstance && this.selectedPlanId) {
@@ -545,6 +565,9 @@
                                     axios.get(route('pricing.subscribeToPlan', {token: this.paymentMethodToken, planId: this.selectedPlanId}))
                                         .then(res=>{
                                             console.log(res);
+                                            this.isLoading = false;
+                                            $('#successModal').modal('show');
+                                            this.updatedPlan = this.current_plan;
                                         })
                                 })
                         })
@@ -556,7 +579,7 @@
             }
         },
         watch:{
-            current_plan: function(value){
+            updatedPlan: function(value){
                 console.log(value)
                 let x = document.getElementById("upgrade")
                 x.style.backgroundColor = value == 'starter'? '#0060E5' : '#67C23A'
@@ -572,16 +595,6 @@
             this.getData()
             this.getUserBraintreeId();
             this.checkPaymentMethod()
-            // let checkoutLib = document.createElement('script')
-            // checkoutLib.setAttribute('src', 'https://www.paypalobjects.com/api/checkout.js')
-            // let clientComponent = document.createElement('script')
-            // clientComponent.setAttribute('src', 'https://js.braintreegateway.com/web/3.60.0/js/client.min.js')
-            // let paypalCheckoutComponent = document.createElement('script')
-            // paypalCheckoutComponent.setAttribute('src', 'https://js.braintreegateway.com/web/3.60.0/js/paypal-checkout.min.js')
-            // document.head.appendChild(checkoutLib, clientComponent, paypalCheckoutComponent)
-
-
-            // this.createBraintreePaypal()
         }
     }
 </script>

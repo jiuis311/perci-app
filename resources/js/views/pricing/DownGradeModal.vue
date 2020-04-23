@@ -12,7 +12,7 @@
           <div class="detail-dg">
             <p>
               Looks like we have supported you achieving some goals but it isn’t good enough. I know there are lots of things that we have to improve.
-            </p> 
+            </p>
             <p>
               So, i wonder can you <a>give us some advice?</a> How can we make this product better? It means alot for us
             </p>
@@ -37,7 +37,7 @@
 export default {
     methods: {
     change(){
-      this.$emit('update', 'free')
+      this.$emit('update')
     }
   },
 }

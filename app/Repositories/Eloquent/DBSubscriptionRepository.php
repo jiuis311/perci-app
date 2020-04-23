@@ -28,6 +28,7 @@ class DBSubscriptionRepository extends DBRepository implements SubscriptionRepos
     if ($subscription) {
       $subscription->plan_id = $new_plan_id;
       $subscription->impression = $new_plan->impressions;
+      $subscription->braintree_subscription_id = $braintree_subscription_id;
       $subscription->save();
     } else {
       $subscription = Subscription::create([

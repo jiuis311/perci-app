@@ -11,7 +11,7 @@
           </div>
           <div class="detail-modal">
             <p>
-              Please enjoy the features of advanced plan. We are always working hard to give you the best experience. 
+              Please enjoy the features of advanced plan. We are always working hard to give you the best experience.
             </p>
             <p>
               You are always our # 1 priority
@@ -22,7 +22,7 @@
               <el-button size="medium" data-dismiss="modal" class="cancel"> Cancel </el-button>
             </el-col>
             <el-col :span="6">
-              <el-button data-dismiss="modal" data-toggle="modal" data-target="#payModal" v-bind:style="{'background-color':'#47CA67', 'color': '#fff'}">
+              <el-button data-dismiss="modal" v-on:click="change" v-bind:style="{'background-color':'#47CA67', 'color': '#fff'}">
                 Upgrade Plan
                 <i class="el-icon-arrow-right el-icon-right"></i>
               </el-button>
@@ -33,7 +33,15 @@
     </div>
   </div>
 </template>
-
+<script>
+export default {
+    methods: {
+    change(){
+      this.$emit('update')
+    }
+  },
+}
+</script>
 <style>
 .title-modal{
   color: #2FCA5A;

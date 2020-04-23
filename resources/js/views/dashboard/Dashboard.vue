@@ -45,8 +45,8 @@
     </div>
 </template>
 <script>
-    import Feedback from "./FeedbackHub/feedback";
-    import Notification from "./notification.vue";
+    import Feedback from "./FeedbackHub/Feedback.vue";
+    import Notification from "./Notification.vue";
 
     export default {
         name: "dashboard",

@@ -22,7 +22,7 @@
               <el-button size="medium" data-dismiss="modal" class="cancel"> Cancel </el-button>
             </el-col>
             <el-col :span="6">
-              <el-button data-dismiss="modal" v-bind:style="{'background-color':'#47CA67', 'color': '#fff'}">
+              <el-button data-dismiss="modal" data-target="#successModal" v-bind:style="{'background-color':'#47CA67', 'color': '#fff'}">
                 Leave us a review
                 <i class="el-icon-arrow-right el-icon-right"></i>
               </el-button>

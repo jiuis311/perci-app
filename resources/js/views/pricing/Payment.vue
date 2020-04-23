@@ -102,7 +102,7 @@
               <el-button size="medium" data-dismiss="modal">Cancel</el-button>
             </el-col>
             <el-col :span="6">
-              <el-button data-dismiss="modal" data-toggle="modal" data-target="#successModal" v-on:click = "complete" v-bind:style="{'background-color':'#47CA67', 'color': '#fff'}">
+              <el-button data-dismiss="modal" v-on:click = "complete" v-bind:style="{'background-color':'#47CA67', 'color': '#fff'}">
                 Complete order
                 <i class="el-icon-arrow-right el-icon-right"></i>
               </el-button>
@@ -112,16 +112,12 @@
       </div>
     </div>
   </div>
-  <Success :v-show="show"/>
 </div>
 </template>
 
 <script>
 
 export default {
-  components:{
-    Success: () => import("@/views/pricing/SuccessModal"),
-  },
   data(){
     return{
       method: 'card',
@@ -129,13 +125,11 @@ export default {
       name:'',
       date: '',
       cvv: '',
-      show: false
     }
   },
   methods: {
     complete(){
       this.$emit('update', 'starter')
-      this.show = true
     }
   },
   mounted(){
